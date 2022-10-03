@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import ip from "ip";
+import referralCodeGenerator from 'referral-code-generator'
 const UserSchema = new mongoose.Schema(
     {
       fullname: { type: String,required:true},
       email: { type: String, required: true },
       password: { type: String, required: true},
       phoneNumber:{ type: Number, required: true},
-      referral_code:{type:Number,required:true},
-      //ip_address:{type:String,required:true}
+      //referral_code:{type:String},
+      ip_visited:[String]
     },
     {
       timestamps: true,
@@ -62,6 +62,9 @@ const UserSchema = new mongoose.Schema(
         return next();
       });
     });
+    //generating refrral code  : 
+    //user.referral_code=user.fullname+referralCodeGenerator.custom('lowercase', 6, 6, 'temitope');;
+    //console.log("genrated...");
   });
   
   export const UserModel = mongoose.model("Users", UserSchema);

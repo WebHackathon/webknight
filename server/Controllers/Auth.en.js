@@ -1,7 +1,9 @@
 import express from "express";
+import otp_generator from "otp-generator";
 import { UserModel } from "../Model/Auth.js";
-import {validationSignin,validationSignup} from "../validations/auth.js";
+import {validationSignin,validationSignup,twofactorauthentication} from "../validations/auth.js";
 const Router = express.Router();
+let OTP_GENERATOR="";
 /**
  * Router       /signup
  * Des          Register new user
@@ -33,9 +35,23 @@ const Router = express.Router();
       await validationSignin(req.body.credentials);
       const user = await UserModel.findByEmailAndPassword(req.body.credentials);
       const token = user.generateJwtToken();
+      OTP_GENERATOR=otp_generator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+      twofactorauthentication(OTP_GENERATOR,req.body.credentials);
+      console.log(OTP_GENERATOR);
       return res.status(200).json({ token, status: "success" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   });
+  Router.get("/emailauth",async(req,res)=>{
+    try{
+      console.log(req.body.credentials.otp);
+      if(OTP_GENERATOR===req.body.credentials.otp){
+        return res.status(200).json({OTP_GENERATOR, status: "success" });
+      }
+      throw new Error("OTP does not match!");
+    }catch(error){
+      return res.status(500).json({ error: error.message });
+    }
+  })
   export default Router;
