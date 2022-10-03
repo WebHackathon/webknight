@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import referralCodeGenerator from 'referral-code-generator'
+import referralCodeGenerator from 'referral-code-generator';
 const UserSchema = new mongoose.Schema(
     {
       fullname: { type: String,required:true},
@@ -15,9 +15,18 @@ const UserSchema = new mongoose.Schema(
       timestamps: true,
     }
   );
-  UserSchema.methods.generateJwtToken = function () {
-    return jwt.sign({ user: this._id.toString() }, "EarnPortalAPP",{expiresIn: '10m'});
+  /**
+   * 
+   var token = jwt.sign({id: user._id}, secret.secretToken, { expiresIn: tokenManager.TOKEN_EXPIRATION_SEC });
+            return res.json({token:token});
+    jwt.sign({ user: this._id.toString() }, "EarnPortalAPP",{expiresIn: '10m'})
+   */
+  UserSchema.methods.generateJwtToken = function (user_detail) {
+    console.log(user_detail);
+    return jwt.sign({id:user_detail},"EarnPortalAPP", { expiresIn:'1m'});
   };
+
+
   UserSchema.statics.findByEmailAndPhone = async ({ email, phoneNumber }) => {
     // check whether email exist
     console.log("before findByEmailAndPhone");
@@ -25,7 +34,7 @@ const UserSchema = new mongoose.Schema(
     const checkUserByPhone = await UserModel.findOne({ phoneNumber });
     console.log("after findByEmailAndPhone");
     if (checkUserByEmail || checkUserByPhone) {
-      throw new Error("User Already Exist...!");
+      throw new Error("User Already Exist...!");throw new Error("User Already Exist...!");
     }
     return false;
   };
