@@ -1,6 +1,8 @@
 import joi from 'joi';
-import { Schema } from 'mongoose';
 import nodemailer from "nodemailer";
+import speakeasy from "speakeasy";
+//var secrets = speakeasy.generateSecret({length: 20});
+let global_api="";
 export const validationSignup =(userData)=>{
     const Schema=joi.object({
         fullname :joi.string().required().min(5).max(30),
@@ -21,6 +23,37 @@ export const validationSignin = (userData)=>{
   
     return Schema.validateAsync(userData);
 }
+//otp generation  : 
+export const otpgeneration=(codeword,user)=>{
+  try{
+    if(codeword==="generate"){
+      console.log("inside generate");
+      const temp_secret = speakeasy.generateSecret();
+      global_api=temp_secret.base32
+      var token=speakeasy.totp({
+        secret:global_api,
+        encoding: "base32"
+      });
+      var remain=(30 - Math.floor((new Date()).getTime() / 1000.0 % 30));
+      console.log('OTP',token,remain);
+      //twofactorauthentication(token,user);
+      //console.log(token,user,secrets);
+      return token;
+    }else{
+      console.log("verification",user);
+      var tokens= speakeasy.totp.verify({
+        secret:global_api,
+        encoding: 'base32',
+        token:user,
+        window:0
+      });
+        console.log(tokens);
+      }
+  }catch(error){
+    return res.status(500).json({ error: error.message });
+  }
+}
+//sending otp mail address to the concern mail
 export const twofactorauthentication=(OTP_GENERATOR,userData)=>{
     console.log(userData);
     var transporter = nodemailer.createTransport({
@@ -33,7 +66,7 @@ export const twofactorauthentication=(OTP_GENERATOR,userData)=>{
        
       var mailOptions = {
         from:'riddhishs75@gmail.com',
-        to:userData.email,
+        to:userData,
         subject: 'two factor authnetication',
         text:OTP_GENERATOR
       };

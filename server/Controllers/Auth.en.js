@@ -1,7 +1,8 @@
 import express from "express";
 import otp_generator from "otp-generator";
 import { UserModel } from "../Model/Auth.js";
-import {validationSignin,validationSignup,twofactorauthentication} from "../validations/auth.js";
+import {validationSignin,validationSignup,twofactorauthentication,otpgeneration} from "../validations/auth.js";
+
 const Router = express.Router();
 let OTP_GENERATOR="";
 /**
@@ -35,21 +36,38 @@ let OTP_GENERATOR="";
       await validationSignin(req.body.credentials);
       const user = await UserModel.findByEmailAndPassword(req.body.credentials);
       const token = user.generateJwtToken();
-      OTP_GENERATOR=otp_generator.generate(6, { upperCaseAlphabets: false, specialChars: false });
-      twofactorauthentication(OTP_GENERATOR,req.body.credentials);
-      console.log(OTP_GENERATOR);
+      //OTP_GENERATOR=otp_generator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+      //console.log(OTP_GENERATOR);
       return res.status(200).json({ token, status: "success" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
   });
-  Router.get("/emailauth",async(req,res)=>{
+  Router.get("/otpgeneration",async(req,res)=>{
+    const{
+      email
+    }=req.body;
+    console.log(email);
     try{
-      console.log(req.body.credentials.otp);
-      if(OTP_GENERATOR===req.body.credentials.otp){
-        return res.status(200).json({OTP_GENERATOR, status: "success" });
+        let opt_generate=otpgeneration("generate",email);
+        //await twofactorauthentication(opt_generate,);
+        return res.status(200).json({opt_generate, status: "success" })
+    }catch(error){
+      console.log(error);
+    }
+  })
+  Router.get("/emailauth",async(req,res)=>{
+    const{
+      otp
+    }=req.body;
+    try{
+      //let opt_generate=otpgeneration("verify",email);
+      console.log(typeof(otp));
+      if(otpgeneration("verify",otp)){
+        return res.status(200).json({otp,status: "success" });
+      }else{
+        return res.status(404).json({otp,status: "failure" });
       }
-      throw new Error("OTP does not match!");
     }catch(error){
       return res.status(500).json({ error: error.message });
     }
