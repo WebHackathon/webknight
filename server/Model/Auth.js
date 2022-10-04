@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
    */
   UserSchema.methods.generateJwtToken = function (user_detail) {
     console.log(user_detail);
-    return jwt.sign({id:user_detail},"EarnPortalAPP", { expiresIn:'1m'});
+    return jwt.sign({id:user_detail},"EarnPortalAPP", { expiresIn:'15m'});
   };
 
 

@@ -28,9 +28,5 @@ Router.get("/:id", async (req, res) => {
     }
 });
 
-/**
- * JWT VALIDATION : 
- * 
- */
 
 export default Router;
