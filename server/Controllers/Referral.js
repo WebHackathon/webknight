@@ -3,7 +3,7 @@ import ip from "ip";
 import { UserModel } from "../Model/Auth.js";
 const Router = express.Router();
 
-Router.get("/:id", async (req, res) => {
+Router.post("/:id", async (req, res) => {
     let device_ip = ip.address();
     let referral_code = req.params.id;
     console.log(referral_code);
@@ -12,7 +12,8 @@ Router.get("/:id", async (req, res) => {
     try {
         UserModel.findOne({_id:referral_code}, function (err, data) {
             if (err) {
-                res.send("IP checking is in problem");
+                console.log("USER OWN id");
+                res.status(400).json({message:"USER OWN id"});
             }else{
                 if(data.ip_visited.includes(device_ip)){
                     res.send("Already used this referral address");
@@ -24,7 +25,8 @@ Router.get("/:id", async (req, res) => {
             }
         })
     } catch (error) {
-      return res.status(500).json({ error: error.message,ll:"sfsd" });
+        console.log(error);
+        return res.status(500).json({ error:"Same referrral link given"});
     }
 });
 

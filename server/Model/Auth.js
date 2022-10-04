@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import ip from "ip";
 import referralCodeGenerator from 'referral-code-generator';
 const UserSchema = new mongoose.Schema(
     {
@@ -8,8 +9,8 @@ const UserSchema = new mongoose.Schema(
       email: { type: String, required: true },
       password: { type: String, required: true},
       phoneNumber:{ type: Number, required: true},
-      //referral_code:{type:String},
-      ip_visited:[String]
+      coins:{ type: Number,default:0},
+      ip_visited:[String],
     },
     {
       timestamps: true,
@@ -23,7 +24,7 @@ const UserSchema = new mongoose.Schema(
    */
   UserSchema.methods.generateJwtToken = function (user_detail) {
     console.log(user_detail);
-    return jwt.sign({id:user_detail},"EarnPortalAPP", { expiresIn:'15m'});
+    return jwt.sign({id:user_detail},"EarnPortalAPP", { expiresIn:'1h'});
   };
 
 
@@ -68,6 +69,7 @@ const UserSchema = new mongoose.Schema(
   
         // assigning hashed password
         user.password = hash;
+        user.ip_visited.push(ip.address());
         return next();
       });
     });

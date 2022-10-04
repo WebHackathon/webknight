@@ -43,7 +43,7 @@ Router.post("/signin", async (req, res) => {
     const user = await UserModel.findByEmailAndPassword(req.body);
     const token = user.generateJwtToken(user.id);
     console.log(token);
-    return res.status(200).json({message:token});
+    return res.status(200).json({ message: token,port:8080});
     /*return res
     .cookie("access_token", token, {
       httpOnly: true,
@@ -69,7 +69,7 @@ Router.post("/otpgeneration", async (req, res) => {
   } = req.body;
   try {
     let opt_generate = otpgeneration("generate", email);
-    await twofactorauthentication(opt_generate,email);
+    await twofactorauthentication(opt_generate, email);
     return res.status(200).json({ opt_generate, status: "success" })
   } catch (error) {
     console.log(error);
@@ -104,22 +104,32 @@ Router.post("/emailauth", async (req, res) => {
  */
 Router.post("/jwt", async (req, res) => {
   console.log("jwt verification");
-    const token = req.body.token;
-    console.log("frontenf token ",token);
-    /*if (!token) {
-      console.log("token already there");
-      return res.sendStatus(403);
-    }*/
-    try {
-      const data = jwt.verify(token,"EarnPortalAPP");
-      req.userId = data.id;
-      console.log(req.userId);
-      //return res.status(200).json({id:req.userId});
-    } catch(error){
-      console.log("token expred....");
-      console.log(error);
-      return res.status(401).json({error:error});
-    }
+  const token = req.body.token;
+  console.log("frontenf token ", token);
+  /*if (!token) {
+    console.log("token already there");
+    return res.sendStatus(403);
+  }*/
+  try {
+    const data = jwt.verify(token, "EarnPortalAPP");
+    req.userId = data.id;
+    console.log(req.userId);
+    let userDetail = "hi";
+    UserModel.findById(req.userId, function (err, docs) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        userDetail = docs;
+        console.log("Result : ", docs);
+        return res.status(200).json({ response:docs});
+      }
+    })
+  } catch (error) {
+    console.log("token expred....");
+    console.log(error);
+    return res.status(401).json({ error: error });
+  }
 });
 
 

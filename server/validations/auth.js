@@ -8,7 +8,9 @@ export const validationSignup = (userData) => {
     fullname: joi.string().required().min(5).max(30),
     email: joi.string().email().required(),
     password: joi.string().min(5),
-    phoneNumber: joi.number()
+    phoneNumber: joi.number(),
+    coins:joi.string().allow(null),
+    ip_visited:joi.allow(null)
   });
   //Validate the data asynchronisly
   console.log("success validation");

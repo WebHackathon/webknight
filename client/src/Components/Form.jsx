@@ -61,7 +61,7 @@ function Form() {
     console.log(result);
     localStorage.setItem('email',email);
     await axios.post('http://localhost:8080/auth/signin', result).then(respond => {
-      console.log("the frontend side is : ", respond.data.message);
+      console.log("the frontend side is : ", respond.data.message, respond.data.port);
       localStorage.setItem('dataKey', respond.data.message);
       clear();
       return navigate("/OTPAuthen");
