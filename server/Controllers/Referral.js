@@ -18,7 +18,8 @@ Router.post("/:id", async (req, res) => {
                 if(data.ip_visited.includes(device_ip)){
                     res.send("Already used this referral address");
                 }else{
-                    data.ip_visited.push(device_ip)
+                    data.ip_visited.push(device_ip);
+                    data.coins+=10;
                     data.save();
                     res.send("successfully referral added");
                 }
