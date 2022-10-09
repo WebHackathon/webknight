@@ -51,8 +51,8 @@ Router.post("/signin", async (req, res) => {
     .status(200)
     .json({ message: "Logged in successfully 😊 👌" });*/
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error });
+    console.log(error.details[0].message);
+    return res.status(500).json({ error: error.details[0].message});
   }
 });
 /**

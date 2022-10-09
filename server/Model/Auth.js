@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema(
     const checkUserByPhone = await UserModel.findOne({ phoneNumber });
     console.log("after findByEmailAndPhone");
     if (checkUserByEmail || checkUserByPhone) {
-      throw new Error("User Already Exist...!");throw new Error("User Already Exist...!");
+      throw new Error("User Already Exist...!");
     }
     return false;
   };

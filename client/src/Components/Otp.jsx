@@ -32,7 +32,7 @@ function Otp() {
       console.log("successfully logged in");
       Swal.fire(
         'Good job!',
-        'You have successfully registered!',
+        'You have successfully Logged in!',
         'Enjoy'
       )
       return navigate("/home");
